@@ -71,3 +71,38 @@ const main = async () => {
 main()
 ```
 In essence, Redis is a powerful tool for building fast and scalable applications by leveraging its in-memory data storage and versatile data structures
+
+## for session store
+```js
+const express = require('express');
+const session = require('express-session');
+
+const Redis = require('redis');
+const RedisStore = require('connect-redis').RedisStore;
+
+const redisClient = Redis.createClient();
+redisClient.connect().catch(console.error);
+
+const store = new RedisStore({client: redisClient});
+
+const app = express();
+
+app.use(session({
+  store:  store,
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 30 }
+}));
+
+app.get('/', async (req, res) => {
+  req.session.views = (req.session.views || 0) + 1;
+  await redisClient.set('views', req.session.views)
+  res.send(`Views: ${req.session.views}`);
+});
+
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});
+
+```
