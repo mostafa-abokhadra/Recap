@@ -1,5 +1,4 @@
 # Redis
-# Redis
 
 Redis is an open-source, in-memory data structure store, often used as a database, cache, and message broker. It's known for its speed and efficiency due to storing data in memory. Redis supports various data structures like strings, lists, hashes, sets, and more. It's commonly used for caching, session management, real-time analytics, and message queuing. 
 Here's a more detailed breakdown:
@@ -24,4 +23,51 @@ E-commerce: Storing product catalogs and user information.
 AI/ML: Used in AI applications for vector embeddings and real-time inference. 
 Redis vs. Traditional Databases:
 Redis is often contrasted with traditional relational databases. While traditional databases excel in data consistency and complex querying, Redis offers speed and simplicity for specific use cases. It's a complementary technology that can be used alongside traditional databases to optimize performance. 
+
+## install 
+```bash
+npm install express express-session redis connect-redis
+```
+
+## sever side code
+```js
+const redis = require('redis')
+
+const redisClient = new redis.createClient()
+
+const connectToRedis = async () => {
+    try {
+        await redisClient.connect()
+
+    if (redisClient.isReady)
+        console.log('redis is ready')
+    } catch(error) {
+        console.log(error)
+    } 
+}
+
+const addToRedisCach = async () => {
+    try {
+        const result = await redisClient.set('name', 'abokhadra')
+        const value = await redisClient.get('name')
+    } catch(error) {
+        //code..
+    }
+}
+
+const deleteFromCach = async () => {
+    try {
+        await redisClient.del('name')
+    } catch(error) {
+        // code..
+    }
+}
+const main = async () => {
+    await connectToRedis()
+    await addToRedisCach()
+    await deleteFromCach()
+    await redisClient.quit()
+}
+main()
+```
 In essence, Redis is a powerful tool for building fast and scalable applications by leveraging its in-memory data storage and versatile data structures
